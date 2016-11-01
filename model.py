@@ -11,24 +11,33 @@ class Bus(db.Model):
     """Muni bus lines"""
     __tablename__ = "buses"
 
-    bus_code = db.Column(db.String(5) primary_key=True)
-    city = db.Column(db.String(5) primary_key=True)
-    bus_name = db.column(db.String(40), nullable=False)
-    bus_lname = db.column(db.String(40), nullable=False)
+    bus_code = db.Column(db.String(5), primary_key=True)
+    city = db.Column(db.String(5))
+    bus_name = db.Column(db.String(40))
+    bus_lname = db.Column(db.String(40))
 
     def __repr__(self):
         """info dispalyed when printed"""
-        return '\n<Bus Code: =%s Bus Line: =%s Bus Route: =%s>' % (self.bus_code, self.bus_name, self.bus_lname)
+        return '\n<Bus Code: =%s City: =%s Bus Number: =%s Bus Name: =%s>' % (self.bus_code, self.city, self.bus_name, self.bus_lname)
 
 class Rating(db.Model):
     """Bus ratings"""
     __tablename__ = "ratings"
 
-    rating_id = db.Column(db.Integer, autoincrement-True, primary_key=True)
+    rating_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
-    bus_code = db.Column(db.Integer, db.ForeignKey('bus.bus_code'))
+    bus_code = db.Column(db.String(5), db.ForeignKey('buses.bus_code'))
     rating = db.Column(db.Integer)
     comments = db.Column(db.String(140), nullable=True)
+
+     # Defining relationships to user
+    user = db.relationship("User",
+                           backref=db.backref("ratings",
+                                              order_by=rating_id))
+    bus = db.relationship("Bus",
+                           backref=db.backref("ratings",
+                                              order_by=rating_id))
+
 
 
     def __repr__(self):
@@ -40,7 +49,7 @@ class User(db.Model):
     """User table"""
     __tablename__ = "users"
 
-    user_id = db.Column(db.Integer, autoincrement-True, primary_key=True)
+    user_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     email = db.Column(db.String(64), nullable=True)
     password = db.Column(db.String(64), nullable=True)
     fname = db.Column(db.String(64), nullable=True)
@@ -55,22 +64,35 @@ class Bus_filter(db.Model):
     """Associative table for Bus and Filter"""
     __tablename__ = "bus_filters"
 
-    bus_filer_id = db.Column(db.Integer primary_key=True)
+    bus_filter_id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
-    bus_code = db.Column(db.Integer, db.ForeignKey('bus.bus_code'))
-    filter_code = db.Column(db.String(5), db.ForeignKey('users.user_id'))
+    bus_code = db.Column(db.String(5), db.ForeignKey('buses.bus_code'))
+    filter_code = db.Column(db.String(5), db.ForeignKey('filters.filter_code'))
 
+    bus = db.relationship("Bus",
+                           backref=db.backref("bus_filters",
+                                              order_by=bus_filter_id))
+    user = db.relationship("User",
+                           backref=db.backref("bus_filters",
+                                              order_by=bus_filter_id))
+    bus = db.relationship("Filter",
+                           backref=db.backref("bus_filters",
+                                              order_by=bus_filter_id))
+
+   
     def __repr__(self):
         """info dispalyed when printed"""
-        return '\n<Bus Filter ID: =%s User Id: =%s Bus Code: =%s Filter Code: =%s>' % (self.bus_filer_id, self.user_id, self.bus_code, self.filter_code)
+        return '\n<Bus Filter ID: =%s User Id: =%s Bus Code: =%s Filter Code: =%s>' % (self.bus_filter_id, self.user_id, self.bus_code, self.filter_code)
 
 
 class Filter(db.Model):
     """Associative table for Bus and Filter"""
     __tablename__ = "filters"
 
-    filter_code = db.Column(db.String(5)primary_key=True)
+    filter_code = db.Column(db.String(5), primary_key=True)
     filter_name = db.Column(db.String(40))
+
+   
 
     def __repr__(self):
         """info dispalyed when printed"""
@@ -85,7 +107,7 @@ def connect_to_db(app):
     """Connect the database to our Flask app."""
 
     # Configure to use our PstgreSQL database
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///ratings'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///reroute'
     app.config['SQLALCHEMY_ECHO'] = True
     db.app = app
     db.init_app(app)
