@@ -11,14 +11,14 @@ class Bus(db.Model):
     """Muni bus lines"""
     __tablename__ = "buses"
 
-    bus_code = db.Column(db.String(5), primary_key=True)
-    city = db.Column(db.String(5))
+    bus_code = db.Column(db.String(20), primary_key=True)
+    city = db.Column(db.String(10))
     bus_name = db.Column(db.String(40))
     bus_lname = db.Column(db.String(40))
 
     def __repr__(self):
         """info dispalyed when printed"""
-        return '\n<Bus Code: =%s City: =%s Bus Number: =%s Bus Name: =%s>' % (self.bus_code, self.city, self.bus_name, self.bus_lname)
+        return '\n<Bus Code: =%s City: =%s Bus Name: =%s Bus Full Name: =%s>' % (self.bus_code, self.city, self.bus_name, self.bus_lname)
 
 class Rating(db.Model):
     """Bus ratings"""

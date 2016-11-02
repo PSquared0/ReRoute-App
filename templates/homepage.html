@@ -1,0 +1,54 @@
+% extends 'base.html' %}
+{% block content %}
+
+  <h1>Reroute</h1>
+
+  <h2>Reroute, pointing you in the right direction</h2>
+
+
+  <h3>Pick a Bus Line</h3>
+
+  <ul>
+    <form action="homepage.html">
+    <select name="Bus">
+    {% for bus in buses %}
+    <option value="{{ bus.bus_name }}">{{ bus.bus_name }}
+    {% endfor %}
+    </select>
+    <br><br>
+    <input type="submit">
+    </form>
+
+<p>OR.</p>
+
+<button onclick="getLocation()">Use Your coordinates</button>
+
+<p id="location"></p>
+
+<script>
+var x = document.getElementById("location");
+
+function getLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition);
+    } else {
+        x.innerHTML = "Geolocation is not supported by this browser.";
+    }
+}
+
+function showPosition(position) {
+    x.innerHTML = "Latitude: " + position.coords.latitude +
+    "<br>Longitude: " + position.coords.longitude;
+}
+</script>
+
+
+
+
+
+
+
+
+ 
+
+{% endblock %}

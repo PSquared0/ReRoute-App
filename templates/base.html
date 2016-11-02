@@ -3,6 +3,10 @@
 <head>
   <title>ReRoute</title>
 </head>
+<body>
+ {% for flash in get_flashed_messages() %}
+      <div class="alert alert-danger" style="width:90%; margin:0 auto;">{{ flash }}</div>
+    {% endfor %}
 
 
 
