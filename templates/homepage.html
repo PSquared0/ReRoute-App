@@ -1,4 +1,4 @@
-% extends 'base.html' %}
+{% extends 'base.html' %}
 {% block content %}
 
   <h1>Reroute</h1>
@@ -9,8 +9,8 @@
   <h3>Pick a Bus Line</h3>
 
   <ul>
-    <form action="homepage.html">
-    <select name="Bus">
+    <form action='/bus_detail', method="get">
+    <select name="bus">
     {% for bus in buses %}
     <option value="{{ bus.bus_name }}">{{ bus.bus_name }}
     {% endfor %}
@@ -19,9 +19,10 @@
     <input type="submit">
     </form>
 
+
 <p>OR.</p>
 
-<button onclick="getLocation()">Use Your coordinates</button>
+<button onclick="getLocation()">Use Your Current Location</button>
 
 <p id="location"></p>
 

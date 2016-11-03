@@ -25,37 +25,78 @@ def index():
                         buses=buses)
     return html
 
-@app.route('/homepage.html?Bus=<buses>')
+
+@app.route('/bus_detail', methods=['GET'])
 def bus_detail():
     """Bus rating page. Allows users to submit rating if logged in"""
 
-    buses = db.session.query(Bus).get(bus_code)
+    info = request.args.get('bus')
+    
 
-    print buses
+    bus_info = Bus.query.get(info)
 
-    return render_template("bus_detail.html",
-                        buses=buses)
-
-
+    return render_template("bus_detail.html", info=bus_info)
 
 
 
-# @app.route('/register', methods=['POST'])
-# def register_process():
-#     """Sign in Page."""
+@app.route('/register', methods=['GET'])
+def register_form():
+    """Show form for user signup."""
 
-#     email = request.form["email"]
-#     password = request.form["password"]
-#     fname = (request.form["firstname"])
-#     lname = request.form["lastname"]
+    return render_template("sign_in_form.html") 
 
-#     new_user = User(email=email, password=password, fname=fname, lname=lname)
 
-#     db.session.add(new_user)
-#     db.session.commit()
 
-#     flash("User %s added." % email)
-#     # return redirect("/users/%s" % new_user.user_id)
+@app.route('/register', methods=['POST'])
+def sign_up():
+    """Sign up page."""
+
+    email = request.form["email"]
+    password = request.form["password"]
+    fname = (request.form["first_name"])
+    lname = request.form["last_name"]
+
+    new_user = User(email=email, password=password, fname=fname, lname=lname)
+
+    db.session.add(new_user)
+    db.session.commit()
+
+    flash("User %s added." % fname)
+
+    return redirect("/")
+    return render_template("homepage.html")
+
+
+@app.route('/login', methods=['GET'])
+def login():
+    """Show login form."""
+
+    return render_template("log_in_form.html")
+
+
+@app.route('/login', methods=['POST'])
+def login_process():
+    """Process login."""
+
+    
+    email = request.form["email"]
+    password = request.form["password"]
+
+    user = User.query.filter_by(email=email).first()
+
+    if not user:
+        flash("No such user")
+        return redirect("/login")
+
+    if user.password != password:
+        flash("Incorrect password")
+        return redirect("/login")
+
+    session["user_id"] = user.user_id
+
+    flash("Logged in")
+    return redirect("/")
+    return render_template("homepage.html")
 
 
 

@@ -13,15 +13,15 @@ def get_bus_list():
     """Gets list of buses from database"""
 
     buses = db.session.query(Bus.bus_name).all()
-    print buses
+
    
     return buses 
 
 def get_bus_details():
     """Shows ratings for bus"""
 
-    bus_detail = db.session.query(Bus).get('5')
-    print bus_detail
+    bus_detail = db.session.query(Bus.bus_name == (Bus.bus_name)).one()
+
    
     return bus_detail
 
