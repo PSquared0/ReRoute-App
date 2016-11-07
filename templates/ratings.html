@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block content %}
+
+
+<br>
+ <h1> {{ rated_bus }}</h1>
+  <h1> {{ user_rating }} </h1>
+<br>
+
+
+{% if "user_id" in session %}
+    <h2>Your Rating</h2>
+    {% if user_rating %}
+        <p>You currently rate this a {{ user_rating.rating }}</p>
+    {% endif %}
+      <form action="/ratings" method="POST" id="usrform">
+          <label>Rating:
+              <input type="number" name="score">
+          </label><br><br>
+  <input type="checkbox" name="awc"> Crowded<br>
+  <input type="checkbox" name="awl"> Arrives Every Blue Moon<br>
+  <input type="checkbox" name="sdn"> Stops That Throw You From Your Seat<br>
+  <input type="checkbox" name="aol"> Agressive Old Ladies<br>
+  <input type="checkbox" name="lnp"> Late Night Party Bus<br>
+  <input type="checkbox" name="hdr"> Hot Drivers<br>
+  <input type="checkbox" name="mdr"> Mean Drivers<br>
+  <input type="checkbox" name="tcb"> Best Tour of the City Bus<br>
+  <input type="checkbox" name="tbd"> Tidy Bus<br>
+  <input type="checkbox" name="cty"> Crusty Bus<br>
+  <input type="checkbox" name="pwk"> Packed with Kids<br>
+  <input type="checkbox" name="dpt"> Departs as You Get to Stop<br>
+  <input type="checkbox" name="wss"> Will Skip Your Stop<br>
+  <input type="checkbox" name="mls"> Has Mystery Liquid in Seats<br>
+
+<br>
+<br>
+
+<textarea rows="4" cols="50" name="comments" form="usrform">
+Enter text here...</textarea>
+<br>
+<br>
+ <input type="submit" value="Submit">
+ </form>
+
+{% endif %}
+
+
+
+
+
+{% endblock %}

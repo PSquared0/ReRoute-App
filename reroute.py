@@ -25,6 +25,10 @@ def get_bus_details():
    
     return bus_detail
 
+def get_rating_average():
+
+    pass
+
 
 
 

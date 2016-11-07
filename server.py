@@ -27,15 +27,35 @@ def index():
 
 
 @app.route('/bus_detail', methods=['GET'])
-def bus_detail():
-    """Bus rating page. Allows users to submit rating if logged in"""
+def bus_list():
+    """Bus detail page. Allows users to submit rating if logged in"""
 
-    info = request.args.get('bus')
     
 
+    info = request.args.get('bus')
     bus_info = Bus.query.get(info)
 
-    return render_template("bus_detail.html", info=bus_info)
+    user_id = session.get("user_id")
+
+    bus_dict = {'code': bus_info.bus_code, 
+                'name': bus_info.bus_name,
+                'lname': bus_info.bus_lname,
+                'city': bus_info.city}
+
+    rated_bus = bus_dict.get('name')
+
+    session['bus_dict'] = bus_dict
+
+    rating = Rating.query.filter_by(
+            bus_code=rated_bus, user_id=user_id).first()
+
+
+
+   
+
+
+
+    return render_template("bus_detail.html", info=bus_info, rating=rating)
 
 
 
@@ -53,10 +73,11 @@ def sign_up():
 
     email = request.form["email"]
     password = request.form["password"]
-    fname = (request.form["first_name"])
+    fname = request.form["first_name"]
     lname = request.form["last_name"]
 
-    new_user = User(email=email, password=password, fname=fname, lname=lname)
+    new_user = User(email=email, password=password, 
+                fname=fname, lname=lname)
 
     db.session.add(new_user)
     db.session.commit()
@@ -70,6 +91,8 @@ def sign_up():
 @app.route('/login', methods=['GET'])
 def login():
     """Show login form."""
+
+
 
     return render_template("log_in_form.html")
 
@@ -86,7 +109,7 @@ def login_process():
 
     if not user:
         flash("No such user")
-        return redirect("/login")
+        return redirect("/register")
 
     if user.password != password:
         flash("Incorrect password")
@@ -97,6 +120,88 @@ def login_process():
     flash("Logged in")
     return redirect("/")
     return render_template("homepage.html")
+
+
+
+@app.route('/logout')
+def logout_process():
+    """Log out"""
+
+    del session["user_id"]
+    flash("Logged Out.")
+    return redirect("/")
+
+
+
+@app.route('/ratings', methods=['GET'])
+def rate():
+    """Show rating page"""
+
+    bus_dict = session.get('bus_dict')
+    rated_bus = bus_dict.get('name')
+    user_id = session.get("user_id")
+
+
+    if user_id:
+        user_rating = Rating.query.filter_by(
+            bus_code=rated_bus, user_id=user_id).first()
+
+    else:
+        user_rating = None
+
+    return render_template("ratings.html",
+                           rated_bus=rated_bus,
+                           user_rating=user_rating)
+
+
+
+
+@app.route('/ratings', methods=['POST'])
+def rate_process():
+    """Submit Ratings."""
+
+    user_id = session.get("user_id")
+    bus_dict = session.get('bus_dict')
+    print "who is the user" 
+    print user_id
+
+    rated_bus = bus_dict.get('name')
+
+
+    if user_id:
+        user_rating = Rating.query.filter_by(
+            bus_code=rated_bus, user_id=user_id).first()
+
+    else:
+        user_rating = None
+
+    
+
+    awc = request.form["awc"]
+    awl = request.form["awl"]
+    sdn = request.form["sdn"]
+    aol = request.form["aol"]
+    lnp = request.form["lnp"]
+    hdr = request.form["hdr"]
+    mdr = request.form["mdr"]
+    tcb = request.form["tcb"]
+    tdb = request.form["tdb"]
+    cty = request.form["cty"]
+    pwk = request.form["pwk"]
+    dtp = request.form["dtp"]
+    wss = request.form["wss"]
+    mls = request.form["mls"]
+    comments = request.form["comments"]
+
+    # comment_info = Ratings(comments=comments)
+    # bus_id_filters = Bus_filter(filter_code=awc, user_id=user_id, bus_code=rated_bus)
+    # print "what are the filters:" 
+    
+
+    # db.session.add(bus_id_filters, comment_info)
+    # db.session.commit()
+
+    return redirect("/bus_detail" + "?bus=" + rated_bus)
 
 
 

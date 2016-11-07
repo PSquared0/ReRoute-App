@@ -1,11 +1,17 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<br>
 
 <br>
 
   <h1> {{ info.bus_name }}</h1>
+  <h1> {{ info.bus_lname }}</h1>
+
+  <h2> {{ rating }} </h2>
+{% if "user_id" in session %}
+  <a href="/ratings">Rate this Bus</a>
+{% endif %}
+
 
 
 {% endblock %}

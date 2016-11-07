@@ -64,25 +64,25 @@ class Bus_filter(db.Model):
     """Associative table for Bus and Filter"""
     __tablename__ = "bus_filters"
 
-    bus_filter_id = db.Column(db.Integer, primary_key=True)
+    bus_filter_code = db.Column(db.Integer, autoincrement=True, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
     bus_code = db.Column(db.String(5), db.ForeignKey('buses.bus_code'))
     filter_code = db.Column(db.String(5), db.ForeignKey('filters.filter_code'))
 
     bus = db.relationship("Bus",
                            backref=db.backref("bus_filters",
-                                              order_by=bus_filter_id))
+                                              order_by=bus_filter_code))
     user = db.relationship("User",
                            backref=db.backref("bus_filters",
-                                              order_by=bus_filter_id))
+                                              order_by=bus_filter_code))
     bus = db.relationship("Filter",
                            backref=db.backref("bus_filters",
-                                              order_by=bus_filter_id))
+                                              order_by=bus_filter_code))
 
    
     def __repr__(self):
         """info dispalyed when printed"""
-        return '\n<Bus Filter ID: =%s User Id: =%s Bus Code: =%s Filter Code: =%s>' % (self.bus_filter_id, self.user_id, self.bus_code, self.filter_code)
+        return '\n<Bus Filter ID: =%s User Id: =%s Bus Code: =%s Filter Code: =%s>' % (self.bus_filter_code, self.user_id, self.bus_code, self.filter_code)
 
 
 class Filter(db.Model):
@@ -98,6 +98,19 @@ class Filter(db.Model):
         """info dispalyed when printed"""
         return '\n<Filter Code: =%s Filter Name: =%s>' % (self.filter_code, self.filter_name)
 
+
+# class Stop(db.Model):
+#     """User table"""
+#     __tablename__ = "users"
+
+#     stop_id = db.Column(db.Integer, primary_key=True)
+#     stop_name = db.Column(db.String(100), nullable=True)
+#     stop_lat = db.Column(db.Integer, nullable=True)
+#     stop_lon = db.Column(db.String(64), nullable=True)
+
+#     def __repr__(self):
+#             """info dispalyed when printed"""
+#             return '\n<Stop ID: =%s Stop Name: =%s Password: =%s Latitude: =%s Longitude: =%s>' % (self.stop_id, self.stop_name, self.stop_lat, self.stop_lon)
 
 
 ##############################################################################
