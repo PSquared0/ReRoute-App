@@ -1,1 +1,5 @@
-<script src="https://code.jquery.com/jquery.js"></script>
+$(':radio').change(
+  function(){
+    $('.choice').text( this.value + ' stars' );
+  } 
+)

@@ -64,25 +64,25 @@ class Bus_filter(db.Model):
     """Associative table for Bus and Filter"""
     __tablename__ = "bus_filters"
 
-    bus_filter_code = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    bus_filter_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
     bus_code = db.Column(db.String(5), db.ForeignKey('buses.bus_code'))
     filter_code = db.Column(db.String(5), db.ForeignKey('filters.filter_code'))
 
     bus = db.relationship("Bus",
                            backref=db.backref("bus_filters",
-                                              order_by=bus_filter_code))
+                                              order_by=bus_filter_id))
     user = db.relationship("User",
                            backref=db.backref("bus_filters",
-                                              order_by=bus_filter_code))
-    bus = db.relationship("Filter",
+                                              order_by=bus_filter_id))
+    filters = db.relationship("Filter",
                            backref=db.backref("bus_filters",
-                                              order_by=bus_filter_code))
+                                              order_by=bus_filter_id))
 
    
     def __repr__(self):
         """info dispalyed when printed"""
-        return '\n<Bus Filter ID: =%s User Id: =%s Bus Code: =%s Filter Code: =%s>' % (self.bus_filter_code, self.user_id, self.bus_code, self.filter_code)
+        return '\n<Bus Filter ID: =%s User Id: =%s Bus Code: =%s Filter Code: =%s>' % (self.bus_filter_id, self.user_id, self.bus_code, self.filter_code)
 
 
 class Filter(db.Model):

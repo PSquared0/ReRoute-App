@@ -175,31 +175,22 @@ def rate_process():
     else:
         user_rating = None
 
-    
+    filters = request.form.getlist("filters")
 
-    awc = request.form["awc"]
-    awl = request.form["awl"]
-    sdn = request.form["sdn"]
-    aol = request.form["aol"]
-    lnp = request.form["lnp"]
-    hdr = request.form["hdr"]
-    mdr = request.form["mdr"]
-    tcb = request.form["tcb"]
-    tdb = request.form["tdb"]
-    cty = request.form["cty"]
-    pwk = request.form["pwk"]
-    dtp = request.form["dtp"]
-    wss = request.form["wss"]
-    mls = request.form["mls"]
+    
     comments = request.form["comments"]
+    score = request.form["rating"]
 
-    # comment_info = Ratings(comments=comments)
-    # bus_id_filters = Bus_filter(filter_code=awc, user_id=user_id, bus_code=rated_bus)
-    # print "what are the filters:" 
+    comment_info = Rating(comments=comments, rating=score, user_id=user_id, bus_code=rated_bus)
+
+
+    for item in filters:
+        bus_filter = Bus_filter(filter_code=item, user_id=user_id, bus_code=rated_bus)
+        db.session.add(bus_filter)
     
 
-    # db.session.add(bus_id_filters, comment_info)
-    # db.session.commit()
+    db.session.add(comment_info)
+    db.session.commit()
 
     return redirect("/bus_detail" + "?bus=" + rated_bus)
 
