@@ -1,8 +1,7 @@
 """Utility file to seed buses database from MovieLens data in seed_data/"""
 
 from sqlalchemy import func
-from model import Bus
-# from model import Bus
+from model import Stop, Bus
 
 from model import connect_to_db, db
 from server import app
@@ -26,6 +25,28 @@ def load_routes():
 
 
         db.session.add(bus)
+
+    db.session.commit()
+
+
+def load_stops():
+    """Loading bus routes into database"""
+
+    print "Stops"
+
+    # Read the routes.text file to 
+
+    Stop.query.delete()
+    for row in open("seed_data/stops.txt"):
+        row = row.rstrip()
+        stop_id, stop_name, stop_lat, stop_lon = row.split(",")[:4]
+
+        stop = Stop(stop_id=stop_id, stop_name=stop_name, stop_lat=stop_lat, stop_lon=stop_lon)
+        print stop
+
+
+
+        db.session.add(stop)
 
     db.session.commit()
 
@@ -55,3 +76,4 @@ if __name__ == "__main__":
 
     # Import different types of data
     load_routes()
+    load_stops()

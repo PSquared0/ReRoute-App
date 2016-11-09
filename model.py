@@ -99,18 +99,18 @@ class Filter(db.Model):
         return '\n<Filter Code: =%s Filter Name: =%s>' % (self.filter_code, self.filter_name)
 
 
-# class Stop(db.Model):
-#     """User table"""
-#     __tablename__ = "users"
+class Stop(db.Model):
+    """User table"""
+    __tablename__ = "stops"
 
-#     stop_id = db.Column(db.Integer, primary_key=True)
-#     stop_name = db.Column(db.String(100), nullable=True)
-#     stop_lat = db.Column(db.Integer, nullable=True)
-#     stop_lon = db.Column(db.String(64), nullable=True)
+    stop_id = db.Column(db.Integer, primary_key=True)
+    stop_name = db.Column(db.String(100), nullable=True)
+    stop_lat = db.Column(db.Float, nullable=True)
+    stop_lon = db.Column(db.Float, nullable=True)
 
-#     def __repr__(self):
-#             """info dispalyed when printed"""
-#             return '\n<Stop ID: =%s Stop Name: =%s Password: =%s Latitude: =%s Longitude: =%s>' % (self.stop_id, self.stop_name, self.stop_lat, self.stop_lon)
+    def __repr__(self):
+            """info dispalyed when printed"""
+            return '\n<Stop ID: =%s Stop Name: =%s Latitude: =%s Longitude: =%s>' % (self.stop_id, self.stop_name, self.stop_lat, self.stop_lon)
 
 
 ##############################################################################

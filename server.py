@@ -5,7 +5,8 @@ from jinja2 import StrictUndefined
 from flask import Flask, jsonify,render_template, redirect, request, flash, session
 from flask_debugtoolbar import DebugToolbarExtension
 
-from model import Bus, Rating, User, Bus_filter, Filter, connect_to_db, db
+from model import Stop, Bus, Rating, User, Bus_filter, Filter, connect_to_db, db
+from math import acos, cos, radians
 import reroute
 
 
@@ -23,7 +24,30 @@ def index():
     buses = reroute.get_bus_list()
     html = render_template("homepage.html",
                         buses=buses)
+
     return html
+
+@app.route('/location', methods=['GET'])
+def location():
+    # latitude = request.args.get('lat')
+    # longitude = request.args.get('long')
+
+    latitude = -122.243
+    longitude = 34.4343
+
+
+
+    bus_stop_id = db.session.query(Stop.stop_id).filter(((Stop.stop_lat + .000400) >= latitude,)).all()
+                                                         # (Stop.stop_lat - .000400) <= latitude)).all()
+                                                        # (Stop.stop_lon + .000400 >= longitude,
+                                                        #  Stop.stop_lon - .000400 <= longitude)).all()
+
+
+    print latitude
+    print longitude
+    print bus_stop_id
+
+    return render_template("location.html", latitude=latitude, longitude=longitude)
 
 
 @app.route('/bus_detail', methods=['GET'])
@@ -44,10 +68,20 @@ def bus_list():
 
     rated_bus = bus_dict.get('name')
 
-    session['bus_dict'] = bus_dict
 
     rating = Rating.query.filter_by(
             bus_code=rated_bus, user_id=user_id).first()
+
+    rating_dict = {'rating_id': rating.rating_id, 
+                    'user_id': rating.user_id,
+                    'bus_code': rating.bus_code,
+                    'score': rating.rating,
+                    'comments': rating.comments,}
+
+    score = rating_dict.get('score')
+
+    session['bus_dict'] = bus_dict
+    session['rating_dict'] = rating_dict
 
 
 
@@ -55,7 +89,7 @@ def bus_list():
 
 
 
-    return render_template("bus_detail.html", info=bus_info, rating=rating)
+    return render_template("bus_detail.html", info=bus_info, rating=rating, score=score)
 
 
 
@@ -85,7 +119,6 @@ def sign_up():
     flash("User %s added." % fname)
 
     return redirect("/")
-    return render_template("homepage.html")
 
 
 @app.route('/login', methods=['GET'])
@@ -116,6 +149,7 @@ def login_process():
         return redirect("/login")
 
     session["user_id"] = user.user_id
+    session["user_fname"] = user.user.fname
 
     flash("Logged in")
     return redirect("/")
@@ -162,8 +196,7 @@ def rate_process():
 
     user_id = session.get("user_id")
     bus_dict = session.get('bus_dict')
-    print "who is the user" 
-    print user_id
+  
 
     rated_bus = bus_dict.get('name')
 
@@ -180,6 +213,8 @@ def rate_process():
     
     comments = request.form["comments"]
     score = request.form["rating"]
+    print "THIS IS THE SCOREEE!"
+    print score
 
     comment_info = Rating(comments=comments, rating=score, user_id=user_id, bus_code=rated_bus)
 
