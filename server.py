@@ -7,7 +7,7 @@ from flask_debugtoolbar import DebugToolbarExtension
 
 from model import Stop, Bus, Rating, User, Bus_filter, Filter, connect_to_db, db
 from math import acos, cos, radians
-import reroute
+import reroute, requests
 
 
 app = Flask(__name__)
@@ -27,27 +27,39 @@ def index():
 
     return html
 
-@app.route('/location', methods=['GET'])
-def location():
-    # latitude = request.args.get('lat')
-    # longitude = request.args.get('long')
-
-    latitude = -122.243
-    longitude = 34.4343
+@app.route('/stop_info', methods=['GET'])
+def stop_info():
+    latitude = request.args.get('lat')
+    longitude = request.args.get('long')
 
 
 
-    bus_stop_id = db.session.query(Stop.stop_id).filter(((Stop.stop_lat + .000400) >= latitude,)).all()
-                                                         # (Stop.stop_lat - .000400) <= latitude)).all()
-                                                        # (Stop.stop_lon + .000400 >= longitude,
-                                                        #  Stop.stop_lon - .000400 <= longitude)).all()
+    bus_stop_id = Stop.query.filter(Stop.stop_lat + .001400 >= latitude, 
+                                    Stop.stop_lat - .001400 <= latitude, 
+                                    Stop.stop_lon + .001400 >= longitude ,
+                                    Stop.stop_lon - .001400 <= longitude).limit(3).all()
+
+    stops = []
+
+    for stop_info in bus_stop_id:
+        stop_dict = stop_info.__dict__
+        stop_id = stop_dict.get('stop_id')
+
+        stops.append(stop_id)
+
+    # reroute.get_stop_info(stops)
+
+    url = reroute.get_stop_info(stops)
+    xml = reroute.send_api(url)
+    info = reroute.get_info(xml)
+    print info
 
 
-    print latitude
-    print longitude
-    print bus_stop_id
 
-    return render_template("location.html", latitude=latitude, longitude=longitude)
+
+
+    return render_template("location.html", stop_id=str(stop_id))
+
 
 
 @app.route('/bus_detail', methods=['GET'])
@@ -237,6 +249,7 @@ def rate_process():
 if __name__ == "__main__":
  
     app.debug = True
+    app.jinja_env.auto_reload = app.debug
 
     connect_to_db(app)
 

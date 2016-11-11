@@ -28,41 +28,29 @@
   </div>
 </form>
 
+<p>Click the button to get your coordinates.</p>
+
+<button onclick="showlocation()">Try It</button>
+
+<p id="demo"></p>
+
 
 <script>
 
-var latitude, longitude;
-$(document).ready(function(){
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(handle_geolocation_query,handle_errors);
-    } else {
-        alert('Geolocation not supported by your broweser.');
-    }
-});
-function handle_errors(error) {  
-    // error handling here
+function showlocation() {
+   // One-shot position request.
+   console.log('clicked');
+   navigator.geolocation.getCurrentPosition(callback);
 }
-function handle_geolocation_query(position){  
-    latitude = (position.coords.latitude);
-    longitude = (position.coords.longitude); 
-    onPositionReady();
+
+function callback(position) {
+   var lat = position.coords.latitude;
+   var long = position.coords.longitude
+   console.log(lat, long);
+   $.get('/stop_info',{'lat': lat, 'long': long})
 }
-function onPositionReady() {
-   var lat = latitude
-   var long = longitude;
-   console.log(lat)
-   console.log(long)
 
-   $.get('/location',{'lat': lat, 'long': long})
-    // proceed
-}     
 
-// $.ajax({
-//     type: 'GET',
-//     url: '/location',
-//     data: JSON.stringify({'lat': lat, 'long': long}, null, '\t'),
-//     contentType: 'application/json;charset=UTF-8'
-// });
 
 </script>
 
