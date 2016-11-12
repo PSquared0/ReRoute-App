@@ -49,24 +49,37 @@ def send_api(url):
 	return xml
 
 
-def get_info(xml):
+def get_bus_name_info(xml):
 
 	xml_infos = xml.find_all('predictions')
 
+
 	for xml_info in xml_infos:
-		info = xml_info['routeTag']
-		info1 = xml_info['minutes']
-		info2 = xml_info['title']
-		print 'route'
-		print info
-		print 'mintues'
-		print info1
-		print 'title'
-		print info2
+		name_info = xml_info['routeTag']
+	
+		
+		return name_info
 
+def get_bus_stops(xml):
 
+	xml_infos = xml.find_all('predictions')
+	
 
-   # return bus_name, minutes, stop_location
+	for xml_info in xml_infos:
+		stop_info = xml_info['stopTitle']
+	
+	return stop_info
+
+def get_bus_mins(xml):
+
+	mins_xml_infos = xml.predictions.prediction['minutes']
+	
+
+	for mins_xml_info in mins_xml_infos:
+		return mins_xml_info
+	
+	return mins_xml_info
+
 
 
 

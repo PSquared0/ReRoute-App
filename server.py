@@ -51,14 +51,17 @@ def stop_info():
 
     url = reroute.get_stop_info(stops)
     xml = reroute.send_api(url)
-    info = reroute.get_info(xml)
-    print info
+    xml_bus_name = reroute.get_bus_name_info(xml)
+    print xml_bus_name
+    xml_stop_name = reroute.get_bus_stops(xml)
+    print xml_stop_name
+    xml_mins = reroute.get_bus_mins(xml)
+    print xml_mins
 
 
 
 
-
-    return render_template("location.html", stop_id=str(stop_id))
+    return render_template("bus_detail_geo.html", xml_bus_name=xml_bus_name, xml_stop_name=xml_stop_name,xml_mins=xml_mins)
 
 
 
