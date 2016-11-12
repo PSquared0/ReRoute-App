@@ -3,7 +3,7 @@ A front-end for a databse that works with the ReRoute database
 """
 
 from flask import Flask,request
-from model import Bus, Rating, User, Bus_filter, Filter, db, connect_to_db
+from model import Bus, Rating, User, Bus_filter, Stop, Filter, db, connect_to_db
 from bs4 import BeautifulSoup
 import requests
 
@@ -79,6 +79,15 @@ def get_bus_mins(xml):
 		return mins_xml_info
 	
 	return mins_xml_info
+
+def get_rating_sum(result_score):
+	
+	sum_list = sum(result_score)
+
+	return sum_list
+
+
+
 
 
 

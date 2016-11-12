@@ -66,9 +66,8 @@ def stop_info():
 
 
 @app.route('/bus_detail', methods=['GET'])
-def bus_list():
+def bus_lists():
     """Bus detail page. Allows users to submit rating if logged in"""
-
     
 
     info = request.args.get('bus')
@@ -84,27 +83,38 @@ def bus_list():
     rated_bus = bus_dict.get('name')
 
 
-    rating = Rating.query.filter_by(
-            bus_code=rated_bus, user_id=user_id).first()
-
-    rating_dict = {'rating_id': rating.rating_id, 
-                    'user_id': rating.user_id,
-                    'bus_code': rating.bus_code,
-                    'score': rating.rating,
-                    'comments': rating.comments,}
-
-    score = rating_dict.get('score')
-
-    session['bus_dict'] = bus_dict
-    session['rating_dict'] = rating_dict
+    # user_rating = Rating.query.filter_by(
+    #         bus_code=rated_bus, user_id=user_id).first()
 
 
+    result_dict = [u.__dict__ for u in Rating.query.filter_by(
+            bus_code=rated_bus).all()]
+
+    result_score =  [d['rating'] for d in result_dict]
+    sessioned_bus_comments =  [d['comments'] for d in result_dict]
+
+    print result_score
+
+    comments =  db.session.query(Rating.comments).all()
+
+    print 'COOOMMMENTS'
+    print sessioned_bus_comments
+
+  
 
    
+    score_count = Rating.query.filter_by(
+            bus_code=rated_bus).count()
 
 
+    if score_count == 0:
+        average = 'What, no rating? Well, rate this bus already!'
+    else:
+        average = reroute.get_rating_sum(result_score)/score_count
+    session['bus_dict'] = bus_dict
 
-    return render_template("bus_detail.html", info=bus_info, rating=rating, score=score)
+    return render_template("bus_detail.html", info=bus_info, average=average, 
+                            sessioned_bus_comments=sessioned_bus_comments)
 
 
 
@@ -164,7 +174,6 @@ def login_process():
         return redirect("/login")
 
     session["user_id"] = user.user_id
-    session["user_fname"] = user.user.fname
 
     flash("Logged in")
     return redirect("/")
@@ -228,8 +237,6 @@ def rate_process():
     
     comments = request.form["comments"]
     score = request.form["rating"]
-    print "THIS IS THE SCOREEE!"
-    print score
 
     comment_info = Rating(comments=comments, rating=score, user_id=user_id, bus_code=rated_bus)
 
@@ -237,7 +244,8 @@ def rate_process():
     for item in filters:
         bus_filter = Bus_filter(filter_code=item, user_id=user_id, bus_code=rated_bus)
         db.session.add(bus_filter)
-    
+
+
 
     db.session.add(comment_info)
     db.session.commit()

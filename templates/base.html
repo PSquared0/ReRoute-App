@@ -9,7 +9,9 @@
 <body>
 
 <a class= "home" href="/">Home</a>
-<a class= "register" href="/register">Sign In</a>
+{% if "user_id" not in session %}
+<a class= "register" href="/register">Register</a>
+{% endif %}
 {% if "user_id" in session %}
     <a class= "login" href="/logout">Logout</a>
 {% else %}
